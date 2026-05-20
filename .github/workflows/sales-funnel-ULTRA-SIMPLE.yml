@@ -35,4 +35,3 @@ jobs:
           git add -A
           git commit -m "Dashboard updated" || exit 0
           git push
-
