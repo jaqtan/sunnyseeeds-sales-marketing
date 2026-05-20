@@ -1,0 +1,38 @@
+name: 🎯 SunnySeeds Sales Funnel Auto-Update
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install libraries
+        run: pip install openpyxl requests
+      
+      - name: Update Excel with Typeform leads
+        env:
+          TYPEFORM_API_KEY: ${{ secrets.TYPEFORM_API_KEY }}
+          TYPEFORM_FORM_ID: ${{ secrets.TYPEFORM_FORM_ID }}
+        run: python scripts/1_fetch_typeform_leads.py
+      
+      - name: Push to GitHub
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add -A
+          git commit -m "Dashboard updated" || exit 0
+          git push
+
