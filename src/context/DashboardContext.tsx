@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { DashboardData, DEFAULT_DATA, Program, ProgramData, ForecastEntry } from '../data/initialData';
+import { DashboardData, DEFAULT_DATA, Program, ProgramData, ForecastEntry, MonthlyProgram } from '../data/initialData';
 
 interface DashboardContextType {
   data: DashboardData;
   updateProgram: (program: Program, field: keyof ProgramData, value: number) => void;
-  updateMonthly: (index: number, program: Program, value: number | null) => void;
+  updateMonthly: (index: number, program: MonthlyProgram, value: number | null) => void;
   updateForecast: (index: number, field: keyof ForecastEntry, value: number | null) => void;
   getTotals: () => ProgramData;
   getConversionRates: (program: Program) => {
@@ -38,7 +38,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }));
   }, []);
 
-  const updateMonthly = useCallback((index: number, program: Program, value: number | null) => {
+  const updateMonthly = useCallback((index: number, program: MonthlyProgram, value: number | null) => {
     setData(prev => {
       const monthly = [...prev.monthly];
       monthly[index] = { ...monthly[index], [program]: value };

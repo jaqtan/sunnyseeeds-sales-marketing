@@ -22,12 +22,25 @@ export interface ProgramData {
   targetEnrollments: number;
 }
 
+export type MonthlyProgram = 'preschool1' | 'preschool2' | 'storysparks' | 'weekendPlayschool' | 'primaryDaycare' | 'fitnessProgram';
+
+export const MONTHLY_PROGRAMS: { key: MonthlyProgram; label: string; color: string }[] = [
+  { key: 'preschool1', label: 'Preschool 1', color: '#f59e0b' },
+  { key: 'preschool2', label: 'Preschool 2', color: '#f97316' },
+  { key: 'storysparks', label: 'StorySparks', color: '#10b981' },
+  { key: 'weekendPlayschool', label: 'Weekend Playschool', color: '#6366f1' },
+  { key: 'primaryDaycare', label: 'Primary Daycare', color: '#ec4899' },
+  { key: 'fitnessProgram', label: 'Fitness Program', color: '#14b8a6' },
+];
+
 export interface MonthlyEntry {
   month: string;
-  preschool: number | null;
+  preschool1: number | null;
+  preschool2: number | null;
   storysparks: number | null;
   weekendPlayschool: number | null;
   primaryDaycare: number | null;
+  fitnessProgram: number | null;
 }
 
 export interface ForecastEntry {
@@ -72,12 +85,12 @@ export const DEFAULT_DATA: DashboardData = {
     primaryDaycare: { ...emptyProgram(), targetLeads: 30, targetTours: 22, targetInterviews: 16, targetOffers: 12, targetEnrollments: 10 },
   },
   monthly: [
-    { month: 'Jan 2026', preschool: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null },
-    { month: 'Feb 2026', preschool: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null },
-    { month: 'Mar 2026', preschool: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null },
-    { month: 'Apr 2026', preschool: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null },
-    { month: 'May 2026', preschool: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null },
-    { month: 'Jun 2026', preschool: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null },
+    { month: 'Jan 2026', preschool1: null, preschool2: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null, fitnessProgram: null },
+    { month: 'Feb 2026', preschool1: null, preschool2: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null, fitnessProgram: null },
+    { month: 'Mar 2026', preschool1: null, preschool2: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null, fitnessProgram: null },
+    { month: 'Apr 2026', preschool1: null, preschool2: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null, fitnessProgram: null },
+    { month: 'May 2026', preschool1: 0, preschool2: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null, fitnessProgram: null },
+    { month: 'Jun 2026', preschool1: null, preschool2: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null, fitnessProgram: null },
   ],
   forecast: [
     { month: 'Jan', preschool: null, storysparks: null, weekendPlayschool: null, primaryDaycare: null, leadToTour: null, tourToInterview: null, interviewToOffer: null, offerToEnrollment: null },

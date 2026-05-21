@@ -1,14 +1,14 @@
 import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   FunnelChart, Funnel, LabelList, Cell,
   LineChart, Line,
 } from 'recharts';
 import { useDashboard } from '../context/DashboardContext';
-import { PROGRAMS } from '../data/initialData';
+import { PROGRAMS, MONTHLY_PROGRAMS } from '../data/initialData';
 
 const COLORS = ['#f59e0b', '#10b981', '#6366f1', '#ec4899'];
+const MONTHLY_COLORS = ['#f59e0b', '#f97316', '#10b981', '#6366f1', '#ec4899', '#14b8a6'];
 
 const AnalyticsView: React.FC = () => {
   const { data, getConversionRates, getDropoffs, getTotals } = useDashboard();
@@ -22,18 +22,6 @@ const AnalyticsView: React.FC = () => {
       'Target Leads': d.targetLeads,
       Enrollments: d.enrollmentsCompleted,
       'Target Enrollments': d.targetEnrollments,
-    };
-  });
-
-  // Conversion rates radar
-  const radarData = PROGRAMS.map((p) => {
-    const r = getConversionRates(p.key);
-    return {
-      program: p.label,
-      'Lead→Tour': parseFloat(r.leadToTour.toFixed(1)),
-      'Tour→Interview': parseFloat(r.tourToInterview.toFixed(1)),
-      'Interview→Offer': parseFloat(r.interviewToOffer.toFixed(1)),
-      'Offer→Enroll': parseFloat(r.offerToEnrollment.toFixed(1)),
     };
   });
 
@@ -58,14 +46,12 @@ const AnalyticsView: React.FC = () => {
     };
   });
 
-  // Monthly chart
-  const monthlyData = data.monthly.map(m => ({
-    month: m.month.replace(' 2026', ''),
-    Preschool: m.preschool ?? 0,
-    StorySparks: m.storysparks ?? 0,
-    'Weekend Playschool': m.weekendPlayschool ?? 0,
-    'Primary Daycare': m.primaryDaycare ?? 0,
-  }));
+  // Monthly chart — 6 programs
+  const monthlyData = data.monthly.map(m => {
+    const row: Record<string, string | number> = { month: m.month.replace(' 2026', '') };
+    MONTHLY_PROGRAMS.forEach(p => { row[p.label] = m[p.key] ?? 0; });
+    return row;
+  });
 
   return (
     <div className="space-y-6">
@@ -131,8 +117,8 @@ const AnalyticsView: React.FC = () => {
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              {PROGRAMS.map((p, i) => (
-                <Line key={p.key} type="monotone" dataKey={p.label} stroke={COLORS[i]} strokeWidth={2} dot={{ r: 4 }} />
+              {MONTHLY_PROGRAMS.map((p, i) => (
+                <Line key={p.key} type="monotone" dataKey={p.label} stroke={MONTHLY_COLORS[i]} strokeWidth={2} dot={{ r: 4 }} />
               ))}
             </LineChart>
           </ResponsiveContainer>
