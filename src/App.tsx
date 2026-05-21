@@ -7,11 +7,12 @@ import AnalyticsView from './components/AnalyticsView';
 import MonthlyView from './components/MonthlyView';
 import ForecastView from './components/ForecastView';
 import WorkflowView from './components/WorkflowView';
+import LeadsView from './components/LeadsView';
 import StudentManagement from './student-management/StudentManagement';
-import { Users, BarChart2, Calendar, TrendingUp, CheckSquare, Sun, GraduationCap } from 'lucide-react';
+import { Users, BarChart2, Calendar, TrendingUp, CheckSquare, Sun, GraduationCap, ClipboardList } from 'lucide-react';
 
 type Tab = 'funnel' | 'analytics' | 'monthly' | 'forecast' | 'workflow';
-type Section = 'sales' | 'students';
+type Section = 'sales' | 'students' | 'leads';
 
 const TAB_CONFIG: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: 'funnel', label: 'Sales Funnel', icon: <Users size={16} /> },
@@ -38,7 +39,6 @@ const DashboardApp: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KPICard title="Total Leads" value={totalLeads} target={totals.targetLeads} color="#f59e0b" icon={<Users size={18} />} />
         <KPICard title="Tours Completed" value={totals.toursCompleted} target={totals.targetTours} color="#6366f1" icon={<Calendar size={18} />} />
@@ -46,7 +46,6 @@ const DashboardApp: React.FC = () => {
         <KPICard title="Enrollments" value={totals.enrollmentsCompleted} target={totals.targetEnrollments} color="#10b981" icon={<CheckSquare size={18} />} />
       </div>
 
-      {/* Per-Program strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {PROGRAMS.map(p => {
           const d = data.programs[p.key];
@@ -72,14 +71,12 @@ const DashboardApp: React.FC = () => {
         })}
       </div>
 
-      {/* Funnel health badge */}
       <div className="flex justify-end">
         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${hc.bg} ${hc.text}`}>
           Funnel Health: {hc.label}
         </span>
       </div>
 
-      {/* Tab panel */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
         <div className="flex gap-1 p-1.5 border-b border-gray-100 overflow-x-auto">
           {TAB_CONFIG.map(t => (
@@ -112,9 +109,14 @@ const DashboardApp: React.FC = () => {
 const App: React.FC = () => {
   const [section, setSection] = useState<Section>('sales');
 
+  const NAV: { key: Section; label: string; icon: React.ReactNode }[] = [
+    { key: 'sales', label: 'Sales & Marketing', icon: <BarChart2 size={16} /> },
+    { key: 'students', label: 'Student Management', icon: <GraduationCap size={16} /> },
+    { key: 'leads', label: 'Enquiry Leads', icon: <ClipboardList size={16} /> },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -124,7 +126,7 @@ const App: React.FC = () => {
             <div>
               <h1 className="text-base font-bold text-gray-900 leading-tight">SunnySeeds Academy</h1>
               <p className="text-xs text-gray-400">
-                {section === 'sales' ? 'Sales & Marketing Dashboard' : 'Student Management'}
+                {NAV.find(n => n.key === section)?.label}
               </p>
             </div>
           </div>
@@ -133,36 +135,26 @@ const App: React.FC = () => {
           </span>
         </div>
 
-        {/* Section toggle */}
         <div className="max-w-7xl mx-auto px-4 md:px-6 pb-3">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSection('sales')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                section === 'sales'
-                  ? 'bg-amber-500 text-white shadow-sm'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <BarChart2 size={16} />
-              Sales &amp; Marketing
-            </button>
-            <button
-              onClick={() => setSection('students')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                section === 'students'
-                  ? 'bg-amber-500 text-white shadow-sm'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <GraduationCap size={16} />
-              Student Management
-            </button>
+          <div className="flex gap-2 flex-wrap">
+            {NAV.map(n => (
+              <button
+                key={n.key}
+                onClick={() => setSection(n.key)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                  section === n.key
+                    ? 'bg-amber-500 text-white shadow-sm'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {n.icon}
+                {n.label}
+              </button>
+            ))}
           </div>
         </div>
       </header>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6">
         {section === 'sales' && (
           <DashboardProvider>
@@ -170,6 +162,7 @@ const App: React.FC = () => {
           </DashboardProvider>
         )}
         {section === 'students' && <StudentManagement />}
+        {section === 'leads' && <LeadsView />}
       </div>
     </div>
   );
